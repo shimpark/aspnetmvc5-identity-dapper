@@ -1,0 +1,78 @@
+@model IEnumerable<WebApp.Models.ApplicationRole>
+
+@{
+    ViewBag.Title = "Roles";
+}
+
+<h2>Roles</h2>
+<p>
+    @Html.ActionLink("Create New Role", "Create")
+</p>
+
+@using (Html.BeginForm("Index", "RoleAdmin", FormMethod.Get))
+{
+    <div class="form-inline">
+        <input type="text" name="search" value="@ViewBag.Search" class="form-control" placeholder="Search roles..." />
+        <button type="submit" class="btn btn-default">Search</button>
+    </div>
+}
+
+@using (Html.BeginForm("BulkDelete", "RoleAdmin", FormMethod.Post))
+{
+    @Html.AntiForgeryToken()
+
+    <table class="table">
+    <thead>
+        <tr>
+            <th><input type="checkbox" id="checkAll" /></th>
+            <th>Id</th>
+            <th>Name</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var role in Model)
+        {
+            <tr>
+                <td><input type="checkbox" name="roleIds" value="@role.Id" /></td>
+                <td>@role.Id</td>
+                <td>@role.Name</td>
+                <td>
+                    @Html.ActionLink("Details", "Details", new { id = role.Id }) |
+                    @Html.ActionLink("Edit", "Edit", new { id = role.Id }) |
+                    @using (Html.BeginForm("Delete", "RoleAdmin", new { id = role.Id }, FormMethod.Post))
+                    {
+                        @Html.AntiForgeryToken()
+                        <button type="submit" class="btn btn-link">Delete</button>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+    </table>
+
+    <button type="submit" class="btn btn-danger">Delete Selected</button>
+}
+
+@{
+    var page = (int)ViewBag.Page;
+    var pageSize = (int)ViewBag.PageSize;
+    var total = (int)ViewBag.Total;
+    var totalPages = (int)System.Math.Ceiling((double)total / pageSize);
+}
+
+<div>
+    <ul class="pagination">
+        @for (int i = 1; i <= totalPages; i++)
+        {
+            <li class="@(i==page?"active":"")">@Html.ActionLink(i.ToString(), "Index", new { search = ViewBag.Search, page = i, pageSize = pageSize })</li>
+        }
+    </ul>
+</div>
+
+<script>
+    document.getElementById('checkAll').addEventListener('change', function(e) {
+        var checked = e.target.checked;
+        document.querySelectorAll('input[name="roleIds"]').forEach(function(cb){ cb.checked = checked; });
+    });
+</script>

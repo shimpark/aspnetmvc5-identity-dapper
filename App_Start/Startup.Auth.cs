@@ -19,6 +19,8 @@ namespace WebApp
             // UserManager와 SignInManager 등록
             app.CreatePerOwinContext<ApplicationUserManager>(ApplicationUserManager.Create);
             app.CreatePerOwinContext<ApplicationSignInManager>(ApplicationSignInManager.Create);
+            // RoleManager 등록 (Dapper 기반)
+            app.CreatePerOwinContext<ApplicationRoleManager>(ApplicationRoleManager.Create);
 
             // 쿠키 인증 활성화
             app.UseCookieAuthentication(new CookieAuthenticationOptions

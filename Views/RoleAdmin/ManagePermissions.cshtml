@@ -1,0 +1,44 @@
+@model IEnumerable<WebApp.Models.RolePermission>
+
+@{
+    var role = ViewBag.Role as WebApp.Models.ApplicationRole;
+    ViewBag.Title = "Manage Permissions";
+}
+
+<h2>Manage Permissions for role: @role?.Name</h2>
+
+@using (Html.BeginForm("AddPermission", "RoleAdmin", FormMethod.Post))
+{
+    @Html.AntiForgeryToken()
+    @Html.Hidden("id", role?.Id)
+    <div class="form-inline">
+        <input type="text" name="permission" class="form-control" placeholder="Permission (e.g. CanEditReports)" />
+        <button type="submit" class="btn btn-primary">Add</button>
+    </div>
+}
+
+@using (Html.BeginForm("RemovePermissions", "RoleAdmin", FormMethod.Post))
+{
+    @Html.AntiForgeryToken()
+    @Html.Hidden("id", role?.Id)
+    <table class="table">
+        <thead>
+            <tr>
+                <th></th>
+                <th>Permission</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var p in Model)
+            {
+                <tr>
+                    <td><input type="checkbox" name="permissions" value="@p.Permission" /></td>
+                    <td>@p.Permission</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <button type="submit" class="btn btn-danger">Remove Selected</button>
+}
+
+@Html.ActionLink("Back to Role", "Details", new { id = role?.Id }, new { @class = "btn btn-default" })

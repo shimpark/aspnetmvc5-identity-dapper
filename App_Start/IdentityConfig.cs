@@ -112,4 +112,20 @@ namespace WebApp
             return new ApplicationSignInManager(context.GetUserManager<ApplicationUserManager>(), context.Authentication);
         }
     }
+
+    public class ApplicationRoleManager : RoleManager<WebApp.Models.ApplicationRole>
+    {
+        public ApplicationRoleManager(IRoleStore<WebApp.Models.ApplicationRole, string> store)
+            : base(store)
+        {
+        }
+
+        public static ApplicationRoleManager Create(IdentityFactoryOptions<ApplicationRoleManager> options, IOwinContext context)
+        {
+            var connectionString = System.Configuration.ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString;
+            var store = new WebApp.Infrastructure.DapperRoleStore(connectionString);
+            var manager = new ApplicationRoleManager(store);
+            return manager;
+        }
+    }
 }

@@ -1,0 +1,26 @@
+@model IEnumerable<WebApp.Models.ApplicationUser>
+
+@{
+    var role = ViewBag.Role as WebApp.Models.ApplicationRole;
+    ViewBag.Title = "Add User to Role";
+}
+
+<h2>Add user to role: @role?.Name</h2>
+
+@using (Html.BeginForm("AddUsers", "RoleAdmin", FormMethod.Post))
+{
+    @Html.AntiForgeryToken()
+    @Html.Hidden("id", role?.Id)
+    <div class="form-group">
+        <label for="userIds">Users</label>
+        <select name="userIds" id="userIds" class="form-control" multiple="multiple" size="10">
+            @foreach (var user in Model)
+            {
+                <option value="@user.Id">@user.UserName (@user.Email)</option>
+            }
+        </select>
+    </div>
+    <button type="submit" class="btn btn-primary">Add Selected</button>
+
+    @Html.ActionLink("Back to Role", "Details", new { id = role?.Id }, new { @class = "btn btn-default" })
+}
