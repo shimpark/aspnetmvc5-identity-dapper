@@ -5,9 +5,9 @@ ASP.NET MVC 5 템플릿에서 Microsoft.AspNet.Identity의 기본 Entity Framewo
 핵심 구현:
 - `Models/ApplicationUser.cs`: `IUser<string>`을 구현한 간단한 사용자 모델
 - `Infrastructure/DapperUserStore.cs`: `IUserStore` 계열 인터페이스들을 Dapper로 구현
-- `App_Start/IdentityConfig.cs`, `App_Start/Startup.Auth.cs`: Dapper 기반 UserManager/SignInManager 구성
+- `App_Start/IdentityConfig.cs`, `App_Start/Startup.Auth.cs`: Dapper 기반 UserManager/SignInManager 구성.
 
-**목표**: EF DbContext와 마이그레이션 의존성을 제거하고, Dapper로 성능 및 쿼리 제어를 높이는 방법을 제공
+**목표**: EF DbContext와 마이그레이션 의존성을 제거하고, Dapper로 성능 및 쿼리 제어를 높이는 방법을 제공.
 
 ## 요구 사항
 - Visual Studio 2017 이상 또는 MSBuild가 있는 개발 환경
