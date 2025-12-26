@@ -22,7 +22,7 @@ namespace WebApp.Controllers
         {
         }
 
-        public AccountController(ApplicationUserManager userManager, ApplicationSignInManager signInManager )
+        public AccountController(ApplicationUserManager userManager, ApplicationSignInManager signInManager)
         {
             UserManager = userManager;
             SignInManager = signInManager;
@@ -34,9 +34,9 @@ namespace WebApp.Controllers
             {
                 return _signInManager ?? HttpContext.GetOwinContext().Get<ApplicationSignInManager>();
             }
-            private set 
-            { 
-                _signInManager = value; 
+            private set
+            {
+                _signInManager = value;
             }
         }
 
@@ -73,9 +73,9 @@ namespace WebApp.Controllers
                 return View(model);
             }
 
-            // This doesn't count login failures towards account lockout
-            // To enable password failures to trigger account lockout, change to shouldLockout: true
-            var result = await SignInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, shouldLockout: false);
+            // Enable account lockout on repeated failed password attempts
+            // This mitigates brute-force attacks; ensure lockout settings are configured in IdentityConfig
+            var result = await SignInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, shouldLockout: true);
             switch (result)
             {
                 case SignInStatus.Success:
@@ -120,7 +120,7 @@ namespace WebApp.Controllers
             // If a user enters incorrect codes for a specified amount of time then the user account 
             // will be locked out for a specified amount of time. 
             // You can configure the account lockout settings in IdentityConfig
-            var result = await SignInManager.TwoFactorSignInAsync(model.Provider, model.Code, isPersistent:  model.RememberMe, rememberBrowser: model.RememberBrowser);
+            var result = await SignInManager.TwoFactorSignInAsync(model.Provider, model.Code, isPersistent: model.RememberMe, rememberBrowser: model.RememberBrowser);
             switch (result)
             {
                 case SignInStatus.Success:
@@ -155,8 +155,8 @@ namespace WebApp.Controllers
                 var result = await UserManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
-                    await SignInManager.SignInAsync(user, isPersistent:false, rememberBrowser:false);
-                    
+                    await SignInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
+
                     // For more information on how to enable account confirmation and password reset please visit https://go.microsoft.com/fwlink/?LinkID=320771
                     // Send an email with this link
                     // string code = await UserManager.GenerateEmailConfirmationTokenAsync(user.Id);
@@ -234,7 +234,11 @@ namespace WebApp.Controllers
         [AllowAnonymous]
         public ActionResult ResetPassword(string code)
         {
-            return code == null ? View("Error") : View();
+            if (string.IsNullOrEmpty(code))
+            {
+                return View("Error");
+            }
+            return View(new ResetPasswordViewModel { Code = code });
         }
 
         //
@@ -367,6 +371,23 @@ namespace WebApp.Controllers
                 {
                     return View("ExternalLoginFailure");
                 }
+
+                // Ensure we have a valid email to create the account. Prefer the form-provided email,
+                // but fall back to the external provider's email if present. Reject if none available.
+                if (string.IsNullOrWhiteSpace(model.Email))
+                {
+                    if (!string.IsNullOrWhiteSpace(info.Email))
+                    {
+                        model.Email = info.Email;
+                    }
+                    else
+                    {
+                        ModelState.AddModelError("", "Email is required to create an account.");
+                        ViewBag.ReturnUrl = returnUrl;
+                        return View(model);
+                    }
+                }
+
                 var user = new ApplicationUser { UserName = model.Email, Email = model.Email };
                 var result = await UserManager.CreateAsync(user);
                 if (result.Succeeded)
