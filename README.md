@@ -98,6 +98,9 @@ CREATE INDEX IX_AspNetUsers_UserName ON AspNetUsers(UserName);
 ## 기여
 예제/학습용 프로젝트입니다. 개선 제안이나 이슈는 Pull Request 또는 Issue로 제출해 주세요.
 
+## 라이선스
+- 특별한 라이선스 파일이 없는 경우 기본적으로 소스 코드를 자유롭게 확인·수정할 수 있습니다. 상업적 사용 전에는 저작권자와 확인하세요.
+
 ---
 
 README에 추가할 사항(원하시면 제가 적용):
