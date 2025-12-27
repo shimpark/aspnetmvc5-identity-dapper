@@ -65,6 +65,16 @@ namespace WebApp
                 RequireUppercase = true,
             };
 
+            // 강화된 해시 알고리즘 사용 (PBKDF2-HMAC-SHA256 기반의 커스텀 해시)
+            // iterations는 Web.config의 appSettings에서 PasswordHashIterations로 설정할 수 있습니다.
+            int iterations = 0;
+            var iterValue = ConfigurationManager.AppSettings["PasswordHashIterations"];
+            if (!string.IsNullOrWhiteSpace(iterValue))
+            {
+                int.TryParse(iterValue, out iterations);
+            }
+            manager.PasswordHasher = iterations > 0 ? new WebApp.Infrastructure.CustomPasswordHasher(iterations) : new WebApp.Infrastructure.CustomPasswordHasher();
+
             // 사용자 잠금 설정
             manager.UserLockoutEnabledByDefault = true;
             manager.DefaultAccountLockoutTimeSpan = TimeSpan.FromMinutes(5);

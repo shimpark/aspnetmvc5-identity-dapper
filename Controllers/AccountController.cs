@@ -73,6 +73,22 @@ namespace WebApp.Controllers
                 return View(model);
             }
 
+            // 레거시 해시 감지 후 재해시(rehash-on-login)
+            var preUser = await UserManager.FindByNameAsync(model.Email);
+            if (preUser != null && !string.IsNullOrEmpty(preUser.PasswordHash))
+            {
+                var verify = UserManager.PasswordHasher.VerifyHashedPassword(preUser.PasswordHash, model.Password);
+                if (verify == PasswordVerificationResult.SuccessRehashNeeded)
+                {
+                    // 새 해시로 교체하고 보안스탬프를 갱신한 뒤 저장
+                    var newHash = UserManager.PasswordHasher.HashPassword(model.Password);
+                    // UserManager does not expose SetPasswordHashAsync; set property and persist via UpdateAsync
+                    preUser.PasswordHash = newHash;
+                    preUser.SecurityStamp = Guid.NewGuid().ToString();
+                    await UserManager.UpdateAsync(preUser);
+                }
+            }
+
             // Enable account lockout on repeated failed password attempts
             // This mitigates brute-force attacks; ensure lockout settings are configured in IdentityConfig
             var result = await SignInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, shouldLockout: true);
