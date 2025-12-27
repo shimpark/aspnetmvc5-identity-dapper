@@ -89,12 +89,6 @@ namespace WebApp.Infrastructure
             }
         }
 
-        private static byte[] GetIntBlock(int i)
-        {
-            // Big-endian
-            return new[] { (byte)(i >> 24), (byte)(i >> 16), (byte)(i >> 8), (byte)i };
-        }
-
         private static bool FixedTimeEquals(byte[] a, byte[] b)
         {
             if (a == null || b == null) return false;
