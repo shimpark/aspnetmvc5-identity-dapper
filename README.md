@@ -100,11 +100,3 @@ CREATE INDEX IX_AspNetUsers_UserName ON AspNetUsers(UserName);
 
 ## 라이선스
 - 특별한 라이선스 파일이 없는 경우 기본적으로 소스 코드를 자유롭게 확인·수정할 수 있습니다. 상업적 사용 전에는 저작권자와 확인하세요.
-
----
-
-README에 추가할 사항(원하시면 제가 적용):
-- LocalDB 자동 생성 PowerShell 스크립트 추가
-- 가입 → 로그인 → 역할 부여 등 시나리오 가이드 및 스크립트
-
-원하시면 어느 항목을 추가할지 알려 주세요.
