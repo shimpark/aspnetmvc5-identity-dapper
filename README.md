@@ -23,7 +23,7 @@
 2. Visual Studio에서 `WebApp.sln`을 엽니다.
 3. NuGet 패키지를 복원합니다 (Visual Studio 자동 복원 또는 `nuget restore`).
 4. `Web.config`의 `DefaultConnection` 연결 문자열을 실제 환경에 맞게 수정하세요.
-	- 기본값은 LocalDB에 있는 `App_Data` 폴더의 `.mdf` 파일을 첨부하는 형태입니다. (예: `AttachDbFilename=|DataDirectory|\aspnet-WebApp-20251125121651.mdf`)
+  - 기본값은 LocalDB에 있는 `App_Data` 폴더의 `.mdf` 파일을 첨부하는 형태입니다. (예: `AttachDbFilename=|DataDirectory|\aspnet-WebApp-20251125121651.mdf`)
 5. 데이터베이스에 Identity 테이블이 없다면 아래 예제 스키마를 참고해 생성하세요.
 6. 프로젝트를 빌드하고 `/Account/Register` 등으로 테스트하세요.
 
