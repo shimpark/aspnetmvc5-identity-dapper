@@ -18,7 +18,7 @@
 ## 빠른 시작
 1. 저장소를 클론합니다 (예):
 
-	git clone https://github.com/shimpark/aspnetmvc5-identity-dapper.git
+    git clone https://github.com/shimpark/aspnetmvc5-identity-dapper.git
 
 2. Visual Studio에서 `WebApp.sln`을 엽니다.
 3. NuGet 패키지를 복원합니다 (Visual Studio 자동 복원 또는 `nuget restore`).
