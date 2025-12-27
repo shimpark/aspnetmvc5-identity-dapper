@@ -78,43 +78,14 @@ namespace WebApp.Infrastructure
             return PasswordVerificationResult.Failed;
         }
 
-        // PBKDF2-HMAC-SHA256 구현 (RFC 2898 변형)
+        // Use framework-provided PBKDF2 (Rfc2898DeriveBytes) with SHA256 when available.
         private static byte[] PBKDF2_HMACSHA256(byte[] password, byte[] salt, int iterations, int dkLen)
         {
-            using (var hmac = new HMACSHA256(password))
+            // Rfc2898DeriveBytes has an overload that accepts a byte[] password and HashAlgorithmName
+            // when targeting .NET Framework 4.7.2+. This delegates the derivation to a tested framework implementation.
+            using (var rfc2898 = new Rfc2898DeriveBytes(password, salt, iterations, HashAlgorithmName.SHA256))
             {
-                int hashLen = hmac.HashSize / 8;
-                int blockCount = (int)Math.Ceiling((double)dkLen / hashLen);
-                var derived = new byte[dkLen];
-                var buffer = new byte[hashLen];
-
-                for (int i = 1; i <= blockCount; i++)
-                {
-                    // salt + INT(i)
-                    var intBlock = GetIntBlock(i);
-                    byte[] saltInt = new byte[salt.Length + 4];
-                    Buffer.BlockCopy(salt, 0, saltInt, 0, salt.Length);
-                    Buffer.BlockCopy(intBlock, 0, saltInt, salt.Length, 4);
-
-                    var u = hmac.ComputeHash(saltInt);
-                    Buffer.BlockCopy(u, 0, buffer, 0, hashLen);
-
-                    var t = (byte[])u.Clone();
-                    for (int j = 1; j < iterations; j++)
-                    {
-                        u = hmac.ComputeHash(u);
-                        for (int k = 0; k < hashLen; k++)
-                        {
-                            t[k] ^= u[k];
-                        }
-                    }
-
-                    int offset = (i - 1) * hashLen;
-                    int toCopy = Math.Min(hashLen, dkLen - offset);
-                    Buffer.BlockCopy(t, 0, derived, offset, toCopy);
-                }
-
-                return derived;
+                return rfc2898.GetBytes(dkLen);
             }
         }
 
