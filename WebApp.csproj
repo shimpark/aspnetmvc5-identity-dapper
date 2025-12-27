@@ -177,6 +177,7 @@
     </Compile>
     <Compile Include="Infrastructure\DapperUserStore.cs" />
     <Compile Include="Infrastructure\DapperRoleStore.cs" />
+    <Compile Include="Infrastructure\CustomPasswordHasher.cs" />
     <Compile Include="Models\RolePermission.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\ApplicationRole.cs" />
